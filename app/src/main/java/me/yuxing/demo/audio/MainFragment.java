@@ -4,11 +4,14 @@ import android.app.Fragment;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,12 +22,14 @@ import me.yuxing.demo.audio.widget.TimingView;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
+    public static final String TAG = "MainFragment";
     private View mAudioStatusView;
     private Button mStartStopButton;
     private boolean mRecording = false;
     private MediaRecorder mMediaRecorder;
     private RecorderListFragment mRecorderListFragment;
     private TimingView mTimingView;
+    private ProgressBar mTimingProgress;
 
     public MainFragment() {
     }
@@ -36,6 +41,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         mAudioStatusView = rootView.findViewById(R.id.audioStatus);
         mStartStopButton = (Button) rootView.findViewById(R.id.startStop);
         mTimingView = (TimingView) rootView.findViewById(R.id.timing);
+        mTimingProgress = (ProgressBar) rootView.findViewById(R.id.timingProgress);
         rootView.findViewById(R.id.startStop).setOnClickListener(this);
         return rootView;
     }
@@ -49,6 +55,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        if (mMediaRecorder != null) {
+            mMediaRecorder.release();
+            mMediaRecorder = null;
+        }
     }
 
     @Override
@@ -81,6 +92,23 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        mTimingProgress.setMax(50000);
+        mTimingProgress.setProgress(25000);
+
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                if (mMediaRecorder != null) {
+                    int maxAmplitude = mMediaRecorder.getMaxAmplitude();
+                    mTimingProgress.setProgress(maxAmplitude);
+                    handler.postDelayed(this, 200);
+                }
+            }
+        };
+        handler.post(runnable);
 
         mTimingView.start();
     }
