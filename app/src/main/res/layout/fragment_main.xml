@@ -26,12 +26,18 @@
             android:id="@+id/audioStatus"
             android:background="#F00"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:gravity="center_horizontal">
 
-            <TextView
-                android:layout_width="match_parent"
+            <me.yuxing.demo.audio.widget.TimingView
+                android:id="@+id/timing"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="00000000"/>
+                android:layout_marginTop="30dp"
+                android:textSize="70sp"
+                android:textColor="#EFEFEF"
+                android:textStyle="bold"
+                android:text="00:00"/>
 
         </LinearLayout>
 

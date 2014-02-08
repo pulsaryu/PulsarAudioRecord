@@ -60,7 +60,9 @@ public class RecorderListFragment extends ListFragment implements LoaderManager.
     @Override
     public void onLoadFinished(Loader<List<File>> loader, List<File> data) {
         mAdapter.clear();
-        mAdapter.addAll(data);
+        if (data != null) {
+            mAdapter.addAll(data);
+        }
         mAdapter.notifyDataSetChanged();
         setListShown(true);
     }
@@ -130,7 +132,10 @@ public class RecorderListFragment extends ListFragment implements LoaderManager.
 
             List<File> entries = new ArrayList<File>();
             File audioDir = getContext().getExternalFilesDir("audio");
-            entries.addAll(Arrays.asList(audioDir.listFiles()));
+            File[] children = audioDir.listFiles();
+            if (children != null) {
+                entries.addAll(Arrays.asList(audioDir.listFiles()));
+            }
 
             return entries;
         }
