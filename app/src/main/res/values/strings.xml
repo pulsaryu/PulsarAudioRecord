@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">DemoAudio</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="button_start">Start</string>
-    <string name="button_stop">Stop</string>
-    <string name="button_yes">YES</string>
-    <string name="button_no">NO</string>
-    <string name="menu_delete">Delete</string>
-    <string name="title_warning">Warning</string>
-    <string name="message_confirm_delete">Are you sure delete this file?</string>
+    <string name="app_name">星星录音机</string>
+    <string name="action_settings">设置</string>
+    <string name="button_start">开始</string>
+    <string name="button_stop">结束</string>
+    <string name="button_yes">是</string>
+    <string name="button_no">不</string>
+    <string name="menu_delete">删除</string>
+    <string name="title_warning">警告</string>
+    <string name="message_confirm_delete">确定要删除这个文件吗？</string>
 
 </resources>

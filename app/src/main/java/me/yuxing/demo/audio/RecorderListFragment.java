@@ -50,35 +50,35 @@ public class RecorderListFragment extends ListFragment implements LoaderManager.
         setListAdapter(mAdapter);
         setListShown(false);
 
-        getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        getListView().setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-            }
+//        getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+//        getListView().setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+//            @Override
+//            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+//            }
+//
+//            @Override
+//            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//                menu.add(0, 1, 0, "Delete");
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//                return true;
+//            }
+//
+//            @Override
+//            public void onDestroyActionMode(ActionMode mode) {
+//
+//            }
+//        });
 
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                menu.add(0, 1, 0, "Delete");
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-
-            }
-        });
-
-//        registerForContextMenu(getListView());
+        registerForContextMenu(getListView());
 
         getLoaderManager().initLoader(0, null, this);
     }

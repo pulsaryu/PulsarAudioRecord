@@ -9,14 +9,16 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import me.yuxing.demo.audio.RecordService;
+
 /**
  * Created by yuxing on 2/8/14.
  */
 public class TimingView extends TextView{
 
     private Timer mTimer;
-    private int mCurrentSecond;
     private Handler mHandler;
+    private RecordService mRecordService;
 
     public TimingView(Context context) {
         this(context, null);
@@ -38,8 +40,8 @@ public class TimingView extends TextView{
         };
     }
 
-    public void start() {
-        mCurrentSecond = 0;
+    public void start(RecordService recordService) {
+        mRecordService = recordService;
         updateView();
         mTimer = new Timer();
         mTimer.schedule(new TimerTaskImpl(), 1000, 1000);
@@ -54,14 +56,14 @@ public class TimingView extends TextView{
     }
 
     private void updateView() {
-        setText(String.format("%02d:%02d", mCurrentSecond / 60, mCurrentSecond % 60));
+        int second = mRecordService.getCurrentSecond();
+        setText(String.format("%02d:%02d", second / 60, second % 60));
     }
 
     private class TimerTaskImpl extends TimerTask {
 
         @Override
         public void run() {
-            mCurrentSecond++;
             mHandler.sendEmptyMessage(0);
         }
     }

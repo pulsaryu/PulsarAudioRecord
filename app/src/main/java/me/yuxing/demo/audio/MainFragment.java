@@ -1,10 +1,15 @@
 package me.yuxing.demo.audio;
 
 import android.app.Fragment;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,16 +25,16 @@ import java.util.Date;
 
 import me.yuxing.demo.audio.widget.TimingView;
 
-public class MainFragment extends Fragment implements View.OnClickListener {
+public class MainFragment extends Fragment implements View.OnClickListener, ServiceConnection {
 
     public static final String TAG = "MainFragment";
     private View mAudioStatusView;
     private Button mStartStopButton;
     private boolean mRecording = false;
-    private MediaRecorder mMediaRecorder;
     private RecorderListFragment mRecorderListFragment;
     private TimingView mTimingView;
     private ProgressBar mTimingProgress;
+    private RecordService mRecordService;
 
     public MainFragment() {
     }
@@ -50,80 +55,72 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mRecorderListFragment = (RecorderListFragment) getFragmentManager().findFragmentById(R.id.recorderList);
+
+        getActivity().bindService(new Intent(getActivity(), RecordService.class), this, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        if (mMediaRecorder != null) {
-            mMediaRecorder.release();
-            mMediaRecorder = null;
-        }
+        getActivity().unbindService(this);
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.startStop) {
-            mRecording = !mRecording;
             if (mRecording) {
-                startRecord();
-            } else {
                 stopRecord();
+            } else {
+                startRecord();
             }
         }
     }
 
     private void startRecord() {
-        mStartStopButton.setText(R.string.button_stop);
-        showAudioStatusView(true);
 
+        getActivity().startService(new Intent(getActivity(), RecordService.class)
+                .putExtra("file_path", createRecordFilePath()));
+
+        updateRecordStatusView(true);
+
+//        final Handler handler = new Handler();
+//        Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                if (mMediaRecorder != null) {
+//                    int maxAmplitude = mMediaRecorder.getMaxAmplitude();
+//                    mTimingProgress.setProgress(maxAmplitude);
+//                    handler.postDelayed(this, 200);
+//                }
+//            }
+//        };
+//        handler.post(runnable);
+    }
+
+    private String createRecordFilePath() {
         File file = new File(getActivity().getExternalFilesDir("audio"), new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".amr");
-
-        mMediaRecorder = new MediaRecorder();
-        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
-        mMediaRecorder.setOutputFile(file.getAbsolutePath());
-        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        try {
-            mMediaRecorder.prepare();
-            mMediaRecorder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        mTimingProgress.setMax(50000);
-        mTimingProgress.setProgress(25000);
-
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-                if (mMediaRecorder != null) {
-                    int maxAmplitude = mMediaRecorder.getMaxAmplitude();
-                    mTimingProgress.setProgress(maxAmplitude);
-                    handler.postDelayed(this, 200);
-                }
-            }
-        };
-        handler.post(runnable);
-
-        mTimingView.start();
+        return file.getAbsolutePath();
     }
 
     private void stopRecord() {
-        mStartStopButton.setText(R.string.button_start);
-        showAudioStatusView(false);
-
-        mMediaRecorder.stop();
-        mMediaRecorder.reset();
-        mMediaRecorder.release();
-        mMediaRecorder = null;
+        getActivity().stopService(new Intent(getActivity(), RecordService.class));
+        updateRecordStatusView(false);
 
         mRecorderListFragment.refresh();
-        mTimingView.stop();
+    }
+
+    private void updateRecordStatusView(boolean show) {
+        if (show) {
+            mRecording = true;
+            mStartStopButton.setText(R.string.button_stop);
+            showAudioStatusView(true);
+        } else {
+            mRecording = false;
+            mStartStopButton.setText(R.string.button_start);
+            showAudioStatusView(false);
+        }
     }
 
     private void showAudioStatusView(boolean show) {
@@ -131,9 +128,27 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         if (show) {
             mAudioStatusView.setVisibility(View.VISIBLE);
             mAudioStatusView.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.audio_status_in));
+            mTimingView.start(mRecordService);
         } else {
             mAudioStatusView.setVisibility(View.GONE);
             mAudioStatusView.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.audio_status_out));
+            mTimingView.stop();
         }
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        Log.d(TAG, "onServiceConnected");
+        mRecordService = ((RecordService.RecordBinder) service).getService();
+
+        if (mRecordService.isRecording()) {
+            updateRecordStatusView(true);
+        }
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        Log.d(TAG, "onServiceDisconnected");
+        mRecordService = null;
     }
 }
