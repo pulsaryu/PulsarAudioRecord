@@ -1,14 +1,11 @@
-package me.yuxing.demo.audio;
+package me.yuxing.audio;
 
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,11 +16,10 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import me.yuxing.demo.audio.widget.TimingView;
+import me.yuxing.audio.widget.TimingView;
 
 public class MainFragment extends Fragment implements View.OnClickListener, ServiceConnection {
 

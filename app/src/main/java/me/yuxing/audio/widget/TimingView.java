@@ -1,4 +1,4 @@
-package me.yuxing.demo.audio.widget;
+package me.yuxing.audio.widget;
 
 import android.content.Context;
 import android.os.Handler;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import me.yuxing.demo.audio.RecordService;
+import me.yuxing.audio.RecordService;
 
 /**
  * Created by yuxing on 2/8/14.

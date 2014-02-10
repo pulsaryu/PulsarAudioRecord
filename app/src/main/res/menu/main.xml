@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="me.yuxing.demo.audio.MainActivity" >
+    tools:context="me.yuxing.audio.MainActivity" >
     
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"

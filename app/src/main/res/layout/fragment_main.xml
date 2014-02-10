@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="me.yuxing.demo.audio.MainActivity.MainFragment">
+    tools:context="me.yuxing.audio.MainActivity.MainFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            class="me.yuxing.demo.audio.RecorderListFragment"
+            class="me.yuxing.audio.RecorderListFragment"
             android:id="@+id/recorderList"/>
 
         <LinearLayout
@@ -26,7 +26,7 @@
             android:gravity="center_horizontal"
             android:clickable="true">
 
-            <me.yuxing.demo.audio.widget.TimingView
+            <me.yuxing.audio.widget.TimingView
                 android:id="@+id/timing"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

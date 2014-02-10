@@ -1,4 +1,4 @@
-package me.yuxing.demo.audio;
+package me.yuxing.audio;
 
 import android.app.Fragment;
 import android.os.Bundle;
