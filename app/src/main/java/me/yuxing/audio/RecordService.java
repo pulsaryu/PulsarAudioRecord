@@ -1,10 +1,14 @@
 package me.yuxing.audio;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import java.io.IOException;
@@ -24,6 +28,7 @@ public class RecordService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        cancelNotification();
         return new RecordBinder();
     }
 
@@ -55,6 +60,13 @@ public class RecordService extends Service {
 
         stopMediaRecord();
         timer.cancel();
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "onUnbind");
+        showNotification();
+        return super.onUnbind(intent);
     }
 
     public int getCurrentSecond() {
@@ -92,6 +104,34 @@ public class RecordService extends Service {
 
     public boolean isRecording() {
         return mMediaRecorder != null;
+    }
+
+    private void showNotification() {
+        Log.d(TAG, "showNotification");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentTitle(getString(R.string.app_running_background));
+        builder.setContentText("test");
+        builder.setSmallIcon(R.drawable.ic_stat_nofication);
+
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        resultIntent.addCategory("android.intent.category.LAUNCHER");
+        resultIntent.setAction("android.intent.action.MAIN");
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(resultPendingIntent);
+
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.notify(0, builder.build());
+    }
+
+    private void cancelNotification() {
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.cancel(0);
     }
 
     public class RecordBinder extends Binder {

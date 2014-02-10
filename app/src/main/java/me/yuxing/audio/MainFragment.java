@@ -51,14 +51,23 @@ public class MainFragment extends Fragment implements View.OnClickListener, Serv
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mRecorderListFragment = (RecorderListFragment) getFragmentManager().findFragmentById(R.id.recorderList);
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
         getActivity().bindService(new Intent(getActivity(), RecordService.class), this, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unbindService(this);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        getActivity().unbindService(this);
     }
 
     @Override

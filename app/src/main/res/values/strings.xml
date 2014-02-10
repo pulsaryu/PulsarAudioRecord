@@ -10,5 +10,6 @@
     <string name="menu_delete">删除</string>
     <string name="title_warning">警告</string>
     <string name="message_confirm_delete">确定要删除这个文件吗？</string>
+    <string name="app_running_background">录音机正在后台运行</string>
 
 </resources>
